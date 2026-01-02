@@ -1,7 +1,7 @@
 import argparse
 
-from lib.udpclient import UDPClient
-from lib.terminal import Terminal
+from utils.udpclient import UDPClient
+from utils.terminal import Terminal
 
 def main():
     parser = argparse.ArgumentParser()
