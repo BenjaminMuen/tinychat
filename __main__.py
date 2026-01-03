@@ -4,13 +4,19 @@ from typing import Tuple
 from core.utils.console import Console
 from core.utils.udpclient import UDPClient
 
+from core.utils.logger import Logger, LogLevel
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="tinychat", description="Simple network utility")
-
-    parser.add_argument("--port", "-p", type=int, default=6000, help="UDP listening port")
-    parser.add_argument("--listen", "-l", action="store_true", help="Run listener without console")
+    
+    parser.add_argument("--listen", "-d", action="store_true", help="Run listener without console")
+    parser.add_argument("--level", "-l", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR)")
+    parser.add_argument("--port", "-p", type=int, default=6000, help="UDP listening port (default: 6000)")
 
     args = parser.parse_args()
+
+    # Initialize logger
+    Logger.set_level(LogLevel.from_string(args.level))
 
     # Initialize UDP client
     client = UDPClient()

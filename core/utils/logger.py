@@ -19,6 +19,10 @@ class Logger:
     _log_level: LogLevel = LogLevel.INFO
 
     @classmethod
+    def set_level(cls, level: LogLevel):
+        cls._log_level = level
+
+    @classmethod
     def log(cls, message: str, level: LogLevel = LogLevel.DEBUG):
         if level.value >= cls._log_level.value:
             timestamp = datetime.now().strftime("%Y.%m.%d %H:%M:%S")

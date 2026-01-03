@@ -8,6 +8,8 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.completion import WordCompleter
 
+from core.utils.logger import Logger
+
 @dataclass
 class Command:
     name: str
@@ -59,7 +61,7 @@ class Console:
 
     def _stop(self):
         if self._state == ConsoleState.STOPPED:
-            print("Console is already stopped.")
+            Logger.warning("Console is already stopped.")
             return
         
         self._state = ConsoleState.STOPPED
@@ -68,25 +70,25 @@ class Console:
             try:
                 self._handle_exit()
             except Exception as e:
-                print(f"Error executing exit handler: {e}")
+                Logger.error(f"Error executing exit handler: {e}")
 
     def _execute(self, name: str, args: List[str]):
         cmd = self._registry.get(name)
 
         if cmd is None:
-            print(f"Unknown command: '{name}'.")
+            Logger.error(f"Unknown command: '{name}'.")
             return
         
         try:
             cmd.func(*args)
         except TypeError as e:
-            print(f"Argument Error executing '{name}': {e}")
+            Logger.error(f"Argument Error executing '{name}': {e}")
         except Exception as e:
-            print(f"Error executing '{name}': {e}")
+            Logger.error(f"Error executing '{name}': {e}")
 
     def run(self):
         if self._state == ConsoleState.RUNNING:
-            print("Console is already running.")
+            Logger.warning("Console is already running.")
             return
         
         self._state = ConsoleState.RUNNING
@@ -114,6 +116,6 @@ class Console:
                     self._stop()
                     break
                 except ValueError:
-                    print("Syntax Error: Check your quotes.")
+                    Logger.error("Syntax Error: Check your quotes.")
                 except Exception as e:
-                    print(f"Unexpected Error: {e}")
+                    Logger.error(f"Unexpected Error: {e}")
