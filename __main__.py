@@ -1,8 +1,8 @@
 import argparse
 from typing import Tuple
 
-from utils.console import Console
-from utils.udpclient import UDPClient
+from core.utils.console import Console
+from core.utils.udpclient import UDPClient
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="tinychat", description="Simple network utility")
@@ -45,6 +45,10 @@ def main() -> None:
     @app.command(description=f"Send a UDP message")
     def send(host: str, port: str, message: str):
         UDPClient.send(host, int(port), message)
+    
+    @app.command(description="Show Information about the application")
+    def info():
+        print("This is a simple UDP based chat application.")
 
     @app.on_exit()
     def exit():
