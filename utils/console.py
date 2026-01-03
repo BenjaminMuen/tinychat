@@ -14,16 +14,16 @@ class Command:
     func: Callable[..., Any]
     description: str
 
-class TerminalState(Enum):
+class ConsoleState(Enum):
     STOPPED = 0
     RUNNING = 1
 
-class Terminal:
+class Console:
     def __init__(self, prompt: str = "> ", intro: str = "Hello There! Type 'help' or 'exit'."):
         self.prompt = prompt
         self.intro = intro
 
-        self._state = TerminalState.STOPPED
+        self._state = ConsoleState.STOPPED
         
         self._registry: Dict[str, Command] = {}
         self._handle_exit: Optional[Callable] = None
@@ -54,15 +54,15 @@ class Terminal:
     def _help(self):
         print("\nAvailable commands:")
         for name, cmd in sorted(self._registry.items()):
-            print(f"  {name:<15} : {cmd.description}")
+            print(f"  {name:<15} : {cmd.description:<15}")
         print()
 
     def _stop(self):
-        if self._state == TerminalState.STOPPED:
-            print("Terminal is already stopped.")
+        if self._state == ConsoleState.STOPPED:
+            print("Console is already stopped.")
             return
         
-        self._state = TerminalState.STOPPED
+        self._state = ConsoleState.STOPPED
 
         if self._handle_exit is not None:
             try:
@@ -85,11 +85,11 @@ class Terminal:
             print(f"Error executing '{name}': {e}")
 
     def run(self):
-        if self._state == TerminalState.RUNNING:
-            print("Terminal is already running.")
+        if self._state == ConsoleState.RUNNING:
+            print("Console is already running.")
             return
         
-        self._state = TerminalState.RUNNING
+        self._state = ConsoleState.RUNNING
 
         print(f"\n{self.intro}")
 
@@ -97,7 +97,7 @@ class Terminal:
         session = PromptSession(completer=completer)
 
         with patch_stdout():
-            while self._state == TerminalState.RUNNING:
+            while self._state == ConsoleState.RUNNING:
                 try:
                     text = session.prompt(self.prompt).strip()
 

@@ -23,7 +23,13 @@ class UDPClient:
             s.sendto(message.encode('utf-8'), (ip, port))
         print(f"[UDPClient] Message '{message}' sent to {ip}:{port}")
 
-    def listen(self, port: int = 5000, on_data: Callable = None):
+    def on_data(self) -> Callable:
+        def decorator(func: Callable) -> Callable:
+            self._handle_data = func
+            return func
+        return decorator
+
+    def listen(self, port: int = 5000):
         if self._state == UDPClientState.RUNNING:
             print(f"[UDPClient] Already listening at port {self._port}")
             return
@@ -33,7 +39,6 @@ class UDPClient:
         print("[UDPClient] Starting UDP listener...")
 
         self._port = port
-        self._handle_data = on_data
 
         try:
             # Initialize UDP socket
